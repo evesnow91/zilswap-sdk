@@ -45,6 +45,7 @@ export type TokenDetails = {
   address: string
   hash: string
   symbol: string
+  name: string
   decimals: number
   whitelisted: boolean // is in default token list
 }
@@ -1308,7 +1309,7 @@ export class Zilswap {
     const contract = (this.walletProvider || this.zilliqa).contracts.at(address)
 
     if (hash === ZIL_HASH) {
-      return { contract, address, hash, symbol: 'ZIL', decimals: 12, whitelisted: true }
+      return { contract, address, hash, symbol: 'ZIL', name: 'Zilliqa', decimals: 12, whitelisted: true }
     }
 
     const init = await contract.getInit()
@@ -1316,9 +1317,10 @@ export class Zilswap {
     const decimalStr = init.find((e: Value) => e.vname === 'decimals').value as string
     const decimals = parseInt(decimalStr, 10)
     const symbol = init.find((e: Value) => e.vname === 'symbol').value as string
+    const name = init.find((e: Value) => e.vname === 'name').value as string
     const whitelisted = this.tokens[symbol] === address
 
-    return { contract, address, hash, symbol, decimals, whitelisted }
+    return { contract, address, hash, symbol, name, decimals, whitelisted }
   }
 
   private async checkAllowedBalance(token: TokenDetails, amount: BigNumber) {
